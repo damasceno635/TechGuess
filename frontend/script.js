@@ -1,55 +1,65 @@
-const API = "http://localhost:3000/products"
+const API = "http://localhost:3000/products";
 
-async function carregar(){
+async function carregar() {
+    const divProdutos = document.getElementById("produtos");
+    divProdutos.innerHTML = '<div class="loading">Carregando produtos...</div>';
 
-const res = await fetch(API)
-
-const produtos = await res.json()
-
-mostrar(produtos)
-
+    try {
+        const res = await fetch(API);
+        if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+        const produtos = await res.json();
+        mostrar(produtos);
+    } catch (error) {
+        console.error("Erro ao carregar:", error);
+        divProdutos.innerHTML = '<div class="error">❌ Erro ao carregar produtos. Tente novamente mais tarde.</div>';
+    }
 }
 
-function mostrar(produtos){
+function mostrar(produtos) {
+    const div = document.getElementById("produtos");
+    if (!produtos || produtos.length === 0) {
+        div.innerHTML = '<div class="error">Nenhum produto encontrado.</div>';
+        return;
+    }
 
-const div = document.getElementById("produtos")
-
-div.innerHTML=""
-
-produtos.forEach(p=>{
-
-div.innerHTML += `
-
-<div class="card">
-
-<img src="${p.image}" width="200">
-
-<h3>${p.name}</h3>
-
-<p>${p.brand}</p>
-
-<p>${p.price}</p>
-
-</div>
-
-`
-
-})
-
+    div.innerHTML = "";
+    produtos.forEach(p => {
+        // Formata preço como moeda
+        const preco = parseFloat(p.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        div.innerHTML += `
+            <div class="card">
+                <img src="${p.image || 'https://via.placeholder.com/200'}" alt="${p.name}">
+                <h3>${p.name || 'Sem nome'}</h3>
+                <p>${p.brand || 'Marca não informada'}</p>
+                <p class="price">${preco}</p>
+            </div>
+        `;
+    });
 }
 
-async function buscar(){
+async function buscar() {
+    const termo = document.getElementById("busca").value.trim().toLowerCase();
+    if (termo === "") {
+        carregar();
+        return;
+    }
 
-const termo = document.getElementById("busca").value.toLowerCase()
+    const divProdutos = document.getElementById("produtos");
+    divProdutos.innerHTML = '<div class="loading">Buscando...</div>';
 
-const res = await fetch(API)
+    try {
+        const res = await fetch(API);
+        if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
+        const produtos = await res.json();
 
-const produtos = await res.json()
-
-const filtrados = produtos.filter(p=>p.tags.toLowerCase().includes(termo))
-
-mostrar(filtrados)
-
+        // Filtra por tags (mantido igual ao original, mas pode expandir)
+        const filtrados = produtos.filter(p => p.tags && p.tags.toLowerCase().includes(termo));
+        mostrar(filtrados);
+    } catch (error) {
+        console.error("Erro na busca:", error);
+        divProdutos.innerHTML = '<div class="error">❌ Erro ao realizar a busca.</div>';
+    }
 }
 
-carregar()
+// Carrega os produtos ao iniciar
+carregar();

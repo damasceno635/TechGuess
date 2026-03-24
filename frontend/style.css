@@ -1,21 +1,130 @@
-body{
-
-font-family:Arial;
-
-background:#f4f4f4;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.card{
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f4f4;
+    padding: 20px;
+}
 
-background:white;
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
 
-padding:20px;
+.search-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-margin:10px;
+#busca {
+    width: 80%;
+    max-width: 500px;
+    padding: 12px 20px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    transition: border 0.3s;
+}
 
-display:inline-block;
+#busca:focus {
+    border-color: #007BFF;
+}
 
-border-radius:10px;
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-left: 10px;
+}
 
+button:hover {
+    background: #0056b3;
+}
+
+#produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    padding: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.card h3 {
+    margin: 15px 0 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.card p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.card .price {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #007BFF;
+    margin-top: 50px;
+}
+
+.error {
+    text-align: center;
+    color: #dc3545;
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    #busca {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    button {
+        width: 100%;
+        margin-left: 0;
+    }
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
 }

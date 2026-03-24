@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Admin Tech Guess</title>
-  <link rel="stylesheet" href="/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Tech Guess</title>
+    <link rel="stylesheet" href="/admin/style.css">
 </head>
 <body>
-  <h1>Admin - Criar Produto</h1>
-  <div class="container">
-    <input id="name" placeholder="Nome do produto">
-    <input id="image" placeholder="URL da imagem">
-    <input id="category" placeholder="Categoria">
-    <input id="brand" placeholder="Marca">
-    <input id="price" placeholder="Preço">
-    <input id="ram" placeholder="RAM">
-    <input id="storage" placeholder="Armazenamento">
-    <textarea id="description" placeholder="Descrição"></textarea>
-    <input id="tags" placeholder="Tags de busca (ex: gaming,camera,estudo)">
-    <button onclick="criar()">Criar Produto</button>
-  </div>
-  <script src="/admin/admin.js"></script>
+    <h1>Admin - Criar Produto</h1>
+    <div class="container">
+        <input id="name" placeholder="Nome do produto *" required>
+        <input id="image" placeholder="URL da imagem">
+        <input id="category" placeholder="Categoria">
+        <input id="brand" placeholder="Marca *" required>
+        <input id="price" placeholder="Preço *" type="number" step="0.01" required>
+        <input id="ram" placeholder="RAM">
+        <input id="storage" placeholder="Armazenamento">
+        <textarea id="description" placeholder="Descrição"></textarea>
+        <input id="tags" placeholder="Tags de busca (ex: gaming,camera,estudo)">
+        <button onclick="criar()" id="submitBtn">Criar Produto</button>
+        <div id="message"></div>
+    </div>
+    <script src="/admin/admin.js"></script>
 </body>
 </html>
