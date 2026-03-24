@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-
+<meta charset="UTF-8">
 <title>Tech Guess</title>
-
 <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
 
 <h1>Tech Guess</h1>
 
-<input type="text" id="busca" placeholder="buscar tecnologia">
-
-<button onclick="buscar()">Buscar</button>
+<div class="search-container">
+<input type="text" id="busca" placeholder="Pesquisar..." onkeyup="buscar()">
+</div>
 
 <div id="produtos"></div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+
+<div class="modal-box">
+
+<span id="fechar">&times;</span>
+
+<div id="modal-detalhes"></div>
+
+</div>
+
+</div>
 
 <script src="script.js"></script>
 
