@@ -5,28 +5,53 @@
 <title>Tech Guess</title>
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <h1>Tech Guess</h1>
 
 <div class="search-container">
-<input type="text" id="busca" placeholder="Pesquisar..." onkeyup="buscar()">
+    <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="aplicarFiltros()">
+</div>
+
+<div class="filtros-container">
+    <div class="filtro-group">
+        <label>Categoria:</label>
+        <select id="filtro-categoria" onchange="aplicarFiltros()">
+            <option value="">Todas</option>
+        </select>
+    </div>
+    <div class="filtro-group">
+        <label>Marca:</label>
+        <select id="filtro-marca" onchange="aplicarFiltros()">
+            <option value="">Todas</option>
+        </select>
+    </div>
+    <div class="filtro-group">
+        <label>Preço até:</label>
+        <input type="range" id="filtro-preco" min="0" max="10000" step="100" value="10000" onchange="aplicarFiltros()">
+        <span id="valor-preco">R$ 10.000,00</span>
+    </div>
+    <div class="filtro-group">
+        <label>Ordenar:</label>
+        <select id="ordenacao" onchange="aplicarFiltros()">
+            <option value="nome_asc">Nome (A-Z)</option>
+            <option value="nome_desc">Nome (Z-A)</option>
+            <option value="preco_asc">Menor preço</option>
+            <option value="preco_desc">Maior preço</option>
+        </select>
+    </div>
 </div>
 
 <div id="produtos"></div>
 
+<div id="paginacao" class="paginacao"></div>
+
 <!-- MODAL -->
 <div id="modal" class="modal">
-
-<div class="modal-box">
-
-<span id="fechar">&times;</span>
-
-<div id="modal-detalhes"></div>
-
-</div>
-
+    <div class="modal-box">
+        <span id="fechar">&times;</span>
+        <div id="modal-detalhes"></div>
+    </div>
 </div>
 
 <script src="script.js"></script>

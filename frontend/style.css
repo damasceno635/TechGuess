@@ -212,3 +212,109 @@ button:hover {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+
+/* Filtros */
+.filtros-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px auto;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filtro-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 150px;
+}
+
+.filtro-group label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+}
+
+.filtro-group select, .filtro-group input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+#filtro-preco {
+    width: 150px;
+}
+
+@media (max-width: 600px) {
+    .filtros-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filtro-group {
+        width: 100%;
+    }
+    #filtro-preco {
+        width: 100%;
+    }
+}
+
+/* Container principal da paginação */
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 40px 0;
+    user-select: none; /* Evita selecionar o texto ao clicar rápido */
+}
+
+/* Estilo base de todos os botões */
+.paginacao button {
+    padding: 10px 16px;
+    border: 2px solid #e0e0e0; /* Borda mais visível */
+    background-color: #ffffff;
+    color: #333333; /* Texto escuro para leitura clara */
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    min-width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Efeito ao passar o mouse (Hover) */
+.paginacao button:hover {
+    background-color: #f0f7ff;
+    border-color: #007BFF;
+    color: #007BFF;
+    transform: translateY(-2px); /* Leve pulo para indicar interação */
+}
+
+/* Botão da página atual (Ativo) */
+.paginacao button.ativo {
+    background-color: #007BFF; /* Azul sólido */
+    border-color: #007BFF;
+    color: #333333; /* Texto branco para alto contraste */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); /* Sombra suave */
+}
+
+/* Estilo especial para botões Anterior/Próximo */
+.paginacao button:first-child,
+.paginacao button:last-child {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+}
+
+/* Efeito de clique (Active) */
+.paginacao button:active {
+    transform: scale(0.95);
+}
