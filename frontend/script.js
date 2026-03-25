@@ -1,8 +1,10 @@
 const API = "http://localhost:3000/products";
 let produtosGlobal = [];
-let produtosFiltradosGlobal = []; // Nova variável para persistir o filtro
+let produtosFiltradosGlobal = [];
 let paginaAtual = 1;
 const itensPorPagina = 8;
+
+let produtosSelecionados = new Map();
 
 async function carregar() {
     const divProdutos = document.getElementById("produtos");
@@ -13,8 +15,8 @@ async function carregar() {
         if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
         const produtos = await res.json();
         produtosGlobal = produtos;
-        popularFiltros();      
-        aplicarFiltros();      
+        popularFiltros();
+        aplicarFiltros();
     } catch (error) {
         console.error("Erro ao carregar:", error);
         divProdutos.innerHTML = '<div class="error">Erro ao carregar produtos</div>';
@@ -66,10 +68,9 @@ function atualizarValorPreco() {
     }
 }
 
-// Esta função agora APENAS filtra e reseta a página
 function aplicarFiltros() {
-    paginaAtual = 1; 
-    atualizarValorPreco(); // Garante que o span de preço atualize ao mover o slider
+    paginaAtual = 1;
+    atualizarValorPreco();
 
     const termo = normalizar(document.getElementById("busca").value.trim());
     const categoria = document.getElementById("filtro-categoria")?.value || "";
@@ -82,7 +83,11 @@ function aplicarFiltros() {
             const nome = normalizar(p.name || "");
             const marcaP = normalizar(p.brand || "");
             const categoriaP = normalizar(p.category || "");
-            if (!(nome.includes(termo) || marcaP.includes(termo) || categoriaP.includes(termo))) return false;
+            const tags = normalizar(p.tags || "");
+            // Descrição removida da busca
+            if (!(nome.includes(termo) || marcaP.includes(termo) || categoriaP.includes(termo) || tags.includes(termo))) {
+                return false;
+            }
         }
         if (categoria && p.category !== categoria) return false;
         if (marca && p.brand !== marca) return false;
@@ -101,10 +106,9 @@ function aplicarFiltros() {
         }
     });
 
-    mostrar(); // Renderiza o que foi filtrado
+    mostrar();
 }
 
-// Esta função apenas exibe o que está em produtosFiltradosGlobal baseado na paginaAtual
 function mostrar() {
     const div = document.getElementById("produtos");
     const paginacaoDiv = document.getElementById("paginacao");
@@ -127,17 +131,33 @@ function mostrar() {
         const preco = parseFloat(p.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const card = document.createElement("div");
         card.className = "card";
+
+        const isSelected = produtosSelecionados.has(p.id);
         card.innerHTML = `
+            <div class="card-checkbox ${isSelected ? 'checked' : ''}" data-id="${p.id}"></div>
             <img src="${p.image || 'https://via.placeholder.com/200'}">
             <h3>${p.name}</h3>
             <p>${p.brand}</p>
             <p class="price">${preco}</p>
         `;
-        card.addEventListener("click", () => abrirDetalhes(p));
+
+        const checkboxDiv = card.querySelector(".card-checkbox");
+        checkboxDiv.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleSelecao(p.id);
+            checkboxDiv.classList.toggle("checked");
+        });
+
+        card.addEventListener("click", (e) => {
+            if (e.target === checkboxDiv || checkboxDiv.contains(e.target)) return;
+            abrirDetalhes(p);
+        });
+
         div.appendChild(card);
     });
 
     criarPaginacao(produtosFiltradosGlobal.length);
+    atualizarContadorSelecionados();
 }
 
 function criarPaginacao(totalItens) {
@@ -151,7 +171,7 @@ function criarPaginacao(totalItens) {
         btnAnterior.textContent = "Anterior";
         btnAnterior.onclick = () => {
             paginaAtual--;
-            mostrar(); // Chama mostrar, NÃO aplicarFiltros
+            mostrar();
         };
         paginacaoDiv.appendChild(btnAnterior);
     }
@@ -162,7 +182,7 @@ function criarPaginacao(totalItens) {
         if (i === paginaAtual) btn.classList.add("ativo");
         btn.onclick = () => {
             paginaAtual = i;
-            mostrar(); // Chama mostrar, NÃO aplicarFiltros
+            mostrar();
         };
         paginacaoDiv.appendChild(btn);
     }
@@ -172,63 +192,149 @@ function criarPaginacao(totalItens) {
         btnProximo.textContent = "Próximo";
         btnProximo.onclick = () => {
             paginaAtual++;
-            mostrar(); // Chama mostrar, NÃO aplicarFiltros
+            mostrar();
         };
         paginacaoDiv.appendChild(btnProximo);
     }
 }
 
-// Abre o modal com detalhes do produto
-function abrirDetalhes(produto) {
+function toggleSelecao(id) {
+    const produto = produtosGlobal.find(p => p.id == id);
+    if (produtosSelecionados.has(id)) {
+        produtosSelecionados.delete(id);
+    } else {
+        produtosSelecionados.set(id, produto);
+    }
+    atualizarContadorSelecionados();
+}
+
+function atualizarContadorSelecionados() {
+    const span = document.getElementById("selectedCount");
+    if (span) span.textContent = produtosSelecionados.size;
+}
+
+// --- Comparação com tags (mas sem exibir tags para o usuário) ---
+function compararProdutos() {
+    if (produtosSelecionados.size === 0) {
+        alert("Selecione pelo menos um produto para comparar.");
+        return;
+    }
+
+    const necessidade = document.getElementById("needInput").value.trim();
+    if (necessidade === "") {
+        alert("Descreva suas necessidades para que possamos recomendar o melhor produto.");
+        return;
+    }
+
+    const stopwords = [
+        "de", "a", "o", "que", "e", "do", "da", "em", "um", "para", "com", "não", "uma",
+        "os", "as", "dos", "das", "por", "mais", "menos", "muito", "pouco", "seu", "sua",
+        "meu", "minha", "ter", "tem", "têm", "está", "estão", "ser", "são", "foi", "foram"
+    ];
+    const palavras = normalizar(necessidade)
+        .split(/\s+/)
+        .filter(palavra => palavra.length > 2 && !stopwords.includes(palavra));
+
+    if (palavras.length === 0) {
+        alert("Descreva com mais detalhes (use palavras-chave como 'câmera', 'bateria', 'desempenho').");
+        return;
+    }
+
+    let pontuacoes = [];
+    for (let [id, produto] of produtosSelecionados.entries()) {
+        let score = 0;
+        // Texto completo do produto incluindo tags (mas tags não aparecem na exibição)
+        const textoProduto = normalizar(`
+            ${produto.name} ${produto.brand} ${produto.category} 
+            ${produto.description} ${produto.tags} 
+            ${produto.ram} ${produto.storage}
+        `);
+        palavras.forEach(palavra => {
+            const regex = new RegExp(`\\b${palavra}\\b`, 'gi');
+            const matches = (textoProduto.match(regex) || []).length;
+            score += matches;
+        });
+        // Bônus extra se palavra aparece no nome ou nas tags (peso maior)
+        const nome = normalizar(produto.name);
+        const tags = normalizar(produto.tags || "");
+        palavras.forEach(palavra => {
+            if (nome.includes(palavra)) score += 2;
+            if (tags.includes(palavra)) score += 2;
+        });
+        pontuacoes.push({ produto, score });
+    }
+
+    pontuacoes.sort((a, b) => b.score - a.score);
+    const melhor = pontuacoes[0];
+
     const modal = document.getElementById("modal");
     const detalhes = document.getElementById("modal-detalhes");
+    const preco = parseFloat(melhor.produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    const preco = parseFloat(produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
+    // Modal sem exibir as tags
     detalhes.innerHTML = `
-        <h2>${produto.name}</h2>
-        <img src="${produto.image || 'https://via.placeholder.com/400'}">
-        <p><strong>Marca:</strong> ${produto.brand || "Não informada"}</p>
-        <p><strong>Categoria:</strong> ${produto.category || "Não informada"}</p>
-        <p><strong>Preço:</strong> ${preco}</p>
-        <p><strong>RAM:</strong> ${produto.ram || "Não informada"}</p>
-        <p><strong>Armazenamento:</strong> ${produto.storage || "Não informado"}</p>
-        <p><strong>Descrição:</strong> ${produto.description || "Sem descrição"}</p>
+        <h2>🎯 Produto Recomendado</h2>
+        <img src="${melhor.produto.image || 'https://via.placeholder.com/400'}">
+        <p><strong>Nome:</strong> ${melhor.produto.name}</p>
+        <p><strong>Marca:</strong> ${melhor.produto.brand || "Não informada"}</p>
+        <p><strong>Categoria:</strong> ${melhor.produto.category || "Não informada"}</p>
+        <p><strong>Preço Estimado:</strong> ${preco}</p>
+        <p><strong>RAM:</strong> ${melhor.produto.ram || "Não informada"}</p>
+        <p><strong>Armazenamento:</strong> ${melhor.produto.storage || "Não informado"}</p>
+        <p><strong>Descrição:</strong> ${melhor.produto.description || "Sem descrição"}</p>
+        <p><strong>Por que este produto?</strong><br>
+        Baseado na sua descrição, este produto obteve a maior compatibilidade (${melhor.score} pontos).<br>
+        As palavras-chave que consideramos foram: ${palavras.join(", ")}.</p>
     `;
-
     modal.classList.add("ativo");
 }
 
-// Normaliza texto para busca (remove acentos e caixa alta)
 function normalizar(texto) {
+    if (!texto) return "";
     return texto
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase();
 }
 
-// Função de busca legada
-function buscar() {
-    aplicarFiltros();
+function abrirDetalhes(produto) {
+    const modal = document.getElementById("modal");
+    const detalhes = document.getElementById("modal-detalhes");
+    const preco = parseFloat(produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    // Modal de detalhes sem tags
+    detalhes.innerHTML = `
+        <h2>${produto.name}</h2>
+        <img src="${produto.image || 'https://via.placeholder.com/400'}">
+        <p><strong>Marca:</strong> ${produto.brand || "Não informada"}</p>
+        <p><strong>Categoria:</strong> ${produto.category || "Não informada"}</p>
+        <p><strong>Preço Estimado:</strong> ${preco}</p>
+        <p><strong>RAM:</strong> ${produto.ram || "Não informada"}</p>
+        <p><strong>Armazenamento:</strong> ${produto.storage || "Não informado"}</p>
+        <p><strong>Descrição:</strong> ${produto.description || "Sem descrição"}</p>
+    `;
+    modal.classList.add("ativo");
 }
 
-// Configuração do modal e eventos de fechar
 document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("modal");
     const fechar = document.getElementById("fechar");
+    if (fechar) fechar.onclick = () => modal.classList.remove("ativo");
+    window.onclick = (event) => { if (event.target === modal) modal.classList.remove("ativo"); };
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") modal.classList.remove("ativo"); });
 
-    if (fechar) {
-        fechar.onclick = () => modal.classList.remove("ativo");
+    const btnComparar = document.getElementById("compareBtn");
+    if (btnComparar) btnComparar.addEventListener("click", compararProdutos);
+
+    // Botão para fechar a barra de comparação (opcional)
+    const closeBar = document.getElementById("closeCompareBar");
+    if (closeBar) {
+        closeBar.addEventListener("click", () => {
+            document.getElementById("compareBar").style.display = "none";
+        });
     }
-
-    window.onclick = (event) => {
-        if (event.target === modal) modal.classList.remove("ativo");
-    };
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") modal.classList.remove("ativo");
-    });
 });
 
-// Inicia o carregamento
+function buscar() { aplicarFiltros(); }
+
 carregar();

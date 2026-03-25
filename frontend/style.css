@@ -318,3 +318,131 @@ button:hover {
 .paginacao button:active {
     transform: scale(0.95);
 }
+
+/* ---- CHECKBOX NO CARD ---- */
+.card {
+    position: relative;  /* para posicionar o checkbox dentro do card */
+}
+
+.card-checkbox {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    z-index: 10;
+    background-color: white;
+    border-radius: 4px;
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-checkbox.checked {
+    background-color: #007BFF;
+    border-color: #007BFF;
+}
+
+.card-checkbox.checked::after {
+    content: "✓";
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ---- BARRA DE COMPARAÇÃO (flutuante) ---- */
+.compare-bar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    padding: 16px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 1000;
+    border: 1px solid #e0e0e0;
+    background: rgba(255,255,255,0.98);
+    transition: all 0.3s ease;
+}
+
+.compare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.close-compare {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    display: inline;
+}
+
+.close-compare:hover {
+    color: #333;
+    background: none;
+}
+
+.compare-info {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+
+#selectedCount {
+    color: #007BFF;
+    font-size: 18px;
+}
+
+#needInput {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+#compareBtn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+#compareBtn:hover {
+    background: #218838;
+}
+
+/* Responsividade: em telas pequenas, a barra fica no topo centralizada */
+@media (max-width: 600px) {
+    .compare-bar {
+        top: 10px;
+        right: 10px;
+        left: auto;
+        width: calc(100% - 20px);
+        max-width: 300px;
+    }
+}

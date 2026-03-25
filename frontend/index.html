@@ -46,7 +46,20 @@
 
 <div id="paginacao" class="paginacao"></div>
 
-<!-- MODAL -->
+<!-- BARRA DE COMPARAÇÃO (canto superior direito) -->
+<div id="compareBar" class="compare-bar">
+    <div class="compare-header">
+        <span>📊 Comparar produtos</span>
+        <button id="closeCompareBar" class="close-compare">&times;</button>
+    </div>
+    <div class="compare-info">
+        <span id="selectedCount">0</span> produto(s) selecionado(s)
+    </div>
+    <textarea id="needInput" rows="2" placeholder="Descreva o que você precisa (ex: 'celular com boa câmera e bateria')"></textarea>
+    <button id="compareBtn">Comparar e Recomendar</button>
+</div>
+
+<!-- MODAL DE DETALHES -->
 <div id="modal" class="modal">
     <div class="modal-box">
         <span id="fechar">&times;</span>
