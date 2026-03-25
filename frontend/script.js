@@ -15,8 +15,11 @@ async function carregar() {
         if (!res.ok) throw new Error(`Erro HTTP: ${res.status}`);
         const produtos = await res.json();
         produtosGlobal = produtos;
+        
+        // Só popula filtros e aplica após ter os produtos
         popularFiltros();
         aplicarFiltros();
+        
     } catch (error) {
         console.error("Erro ao carregar:", error);
         divProdutos.innerHTML = '<div class="error">Erro ao carregar produtos</div>';
@@ -24,6 +27,9 @@ async function carregar() {
 }
 
 function popularFiltros() {
+    // Verifica se há produtos
+    if (!produtosGlobal || produtosGlobal.length === 0) return;
+    
     const categorias = [...new Set(produtosGlobal.map(p => p.category).filter(c => c && c.trim() !== ""))];
     const marcas = [...new Set(produtosGlobal.map(p => p.brand).filter(b => b && b.trim() !== ""))];
     const selectCat = document.getElementById("filtro-categoria");
@@ -49,13 +55,16 @@ function popularFiltros() {
         });
     }
 
+    // Ajusta o valor máximo do slider de preço
     const precos = produtosGlobal.map(p => parseFloat(p.price)).filter(p => !isNaN(p));
-    const maxPreco = precos.length ? Math.max(...precos) : 10000;
-    const slider = document.getElementById("filtro-preco");
-    if (slider) {
-        slider.max = maxPreco;
-        slider.value = maxPreco;
-        atualizarValorPreco();
+    if (precos.length > 0) {
+        const maxPreco = Math.max(...precos);
+        const slider = document.getElementById("filtro-preco");
+        if (slider) {
+            slider.max = Math.ceil(maxPreco);
+            slider.value = Math.ceil(maxPreco);
+            atualizarValorPreco();
+        }
     }
 }
 
@@ -69,9 +78,11 @@ function atualizarValorPreco() {
 }
 
 function aplicarFiltros() {
+    // Verifica se há produtos
+    if (!produtosGlobal || produtosGlobal.length === 0) return;
+    
     paginaAtual = 1;
-    atualizarValorPreco();
-
+    
     const termo = normalizar(document.getElementById("busca").value.trim());
     const categoria = document.getElementById("filtro-categoria")?.value || "";
     const marca = document.getElementById("filtro-marca")?.value || "";
@@ -84,7 +95,6 @@ function aplicarFiltros() {
             const marcaP = normalizar(p.brand || "");
             const categoriaP = normalizar(p.category || "");
             const tags = normalizar(p.tags || "");
-            // Descrição removida da busca
             if (!(nome.includes(termo) || marcaP.includes(termo) || categoriaP.includes(termo) || tags.includes(termo))) {
                 return false;
             }
@@ -213,7 +223,6 @@ function atualizarContadorSelecionados() {
     if (span) span.textContent = produtosSelecionados.size;
 }
 
-// --- Comparação com tags (mas sem exibir tags para o usuário) ---
 function compararProdutos() {
     if (produtosSelecionados.size === 0) {
         alert("Selecione pelo menos um produto para comparar.");
@@ -243,7 +252,6 @@ function compararProdutos() {
     let pontuacoes = [];
     for (let [id, produto] of produtosSelecionados.entries()) {
         let score = 0;
-        // Texto completo do produto incluindo tags (mas tags não aparecem na exibição)
         const textoProduto = normalizar(`
             ${produto.name} ${produto.brand} ${produto.category} 
             ${produto.description} ${produto.tags} 
@@ -254,7 +262,6 @@ function compararProdutos() {
             const matches = (textoProduto.match(regex) || []).length;
             score += matches;
         });
-        // Bônus extra se palavra aparece no nome ou nas tags (peso maior)
         const nome = normalizar(produto.name);
         const tags = normalizar(produto.tags || "");
         palavras.forEach(palavra => {
@@ -271,7 +278,6 @@ function compararProdutos() {
     const detalhes = document.getElementById("modal-detalhes");
     const preco = parseFloat(melhor.produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-    // Modal sem exibir as tags
     detalhes.innerHTML = `
         <h2>🎯 Produto Recomendado</h2>
         <img src="${melhor.produto.image || 'https://via.placeholder.com/400'}">
@@ -301,18 +307,32 @@ function abrirDetalhes(produto) {
     const modal = document.getElementById("modal");
     const detalhes = document.getElementById("modal-detalhes");
     const preco = parseFloat(produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-    // Modal de detalhes sem tags
-    detalhes.innerHTML = `
+    
+    // Verifica se a categoria contém "fone de ouvido" (case insensitive)
+    const categoria = (produto.category || "").toLowerCase();
+    const isFone = categoria.includes("fone") || categoria.includes("fone de ouvido");
+    
+    // Monta o HTML condicionalmente
+    let html = `
         <h2>${produto.name}</h2>
         <img src="${produto.image || 'https://via.placeholder.com/400'}">
         <p><strong>Marca:</strong> ${produto.brand || "Não informada"}</p>
         <p><strong>Categoria:</strong> ${produto.category || "Não informada"}</p>
         <p><strong>Preço Estimado:</strong> ${preco}</p>
-        <p><strong>RAM:</strong> ${produto.ram || "Não informada"}</p>
-        <p><strong>Armazenamento:</strong> ${produto.storage || "Não informado"}</p>
-        <p><strong>Descrição:</strong> ${produto.description || "Sem descrição"}</p>
     `;
+    
+    // Se NÃO for fone de ouvido, mostra RAM e Armazenamento
+    if (!isFone) {
+        html += `
+            <p><strong>RAM:</strong> ${produto.ram || "Não informada"}</p>
+            <p><strong>Armazenamento:</strong> ${produto.storage || "Não informado"}</p>
+        `;
+    }
+    
+    // Descrição sempre aparece
+    html += `<p><strong>Descrição:</strong> ${produto.description || "Sem descrição"}</p>`;
+    
+    detalhes.innerHTML = html;
     modal.classList.add("ativo");
 }
 
@@ -326,15 +346,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnComparar = document.getElementById("compareBtn");
     if (btnComparar) btnComparar.addEventListener("click", compararProdutos);
 
-    // Botão para fechar a barra de comparação (opcional)
     const closeBar = document.getElementById("closeCompareBar");
     if (closeBar) {
         closeBar.addEventListener("click", () => {
             document.getElementById("compareBar").style.display = "none";
         });
     }
+    
+    // Inicia o carregamento
+    carregar();
 });
 
 function buscar() { aplicarFiltros(); }
-
-carregar();

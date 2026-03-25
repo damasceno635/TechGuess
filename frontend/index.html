@@ -28,8 +28,8 @@
     </div>
     <div class="filtro-group">
         <label>Preço até:</label>
-        <input type="range" id="filtro-preco" min="0" max="10000" step="100" value="10000" onchange="aplicarFiltros()">
-        <span id="valor-preco">R$ 10.000,00</span>
+        <input type="range" id="filtro-preco" min="0" step="1" oninput="atualizarValorPreco()" onchange="aplicarFiltros()">
+        <span id="valor-preco">R$ 0,00</span>
     </div>
     <div class="filtro-group">
         <label>Ordenar:</label>
