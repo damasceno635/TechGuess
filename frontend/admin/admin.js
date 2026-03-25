@@ -1,4 +1,8 @@
 const API = "http://localhost:3000/products";
+let produtosCompletos = [];      // Todos os produtos carregados
+let produtosFiltrados = [];      // Produtos após busca
+let paginaAdminAtual = 1;
+const itensPorPaginaAdmin = 5;
 
 // ==================== CRIAÇÃO ====================
 async function criarProduto() {
@@ -35,7 +39,7 @@ async function criarProduto() {
         if (!response.ok) throw new Error(await response.text());
         showMessage("✅ Produto criado!", "success");
         document.querySelectorAll("#name, #image, #category, #brand, #price, #ram, #storage, #description, #tags").forEach(el => el.value = "");
-        carregarProdutos();
+        await carregarProdutos();  // Recarrega a lista
     } catch (error) {
         console.error(error);
         showMessage("❌ Erro: " + error.message, "error");
@@ -45,29 +49,60 @@ async function criarProduto() {
     }
 }
 
-// ==================== LISTAGEM ====================
+// ==================== LISTAGEM COM BUSCA E PAGINAÇÃO ====================
 async function carregarProdutos() {
     const divLista = document.getElementById("lista-produtos");
     divLista.innerHTML = "<p>Carregando...</p>";
     try {
         const res = await fetch(API);
         if (!res.ok) throw new Error("Erro ao carregar");
-        const produtos = await res.json();
-        exibirProdutos(produtos);
+        produtosCompletos = await res.json();
+        filtrarProdutosAdmin();  // Aplica filtro (se houver) e exibe
     } catch (error) {
         divLista.innerHTML = "<p>Erro ao carregar produtos.</p>";
         console.error(error);
     }
 }
 
-function exibirProdutos(produtos) {
+function filtrarProdutosAdmin() {
+    const termo = document.getElementById("buscaAdmin").value.trim().toLowerCase();
+    
+    if (termo === "") {
+        produtosFiltrados = [...produtosCompletos];
+    } else {
+        produtosFiltrados = produtosCompletos.filter(prod => 
+            prod.name && prod.name.toLowerCase().includes(termo)
+        );
+    }
+    
+    paginaAdminAtual = 1;
+    exibirProdutosPaginados();
+}
+
+function limparBuscaAdmin() {
+    document.getElementById("buscaAdmin").value = "";
+    filtrarProdutosAdmin();
+}
+
+function exibirProdutosPaginados() {
     const divLista = document.getElementById("lista-produtos");
-    if (!produtos.length) {
+    const paginacaoDiv = document.getElementById("adminPaginacao");
+    
+    if (!produtosFiltrados.length) {
         divLista.innerHTML = "<p>Nenhum produto encontrado.</p>";
+        paginacaoDiv.innerHTML = "";
         return;
     }
+    
+    const totalPaginas = Math.ceil(produtosFiltrados.length / itensPorPaginaAdmin);
+    if (paginaAdminAtual > totalPaginas) paginaAdminAtual = totalPaginas;
+    
+    const inicio = (paginaAdminAtual - 1) * itensPorPaginaAdmin;
+    const fim = inicio + itensPorPaginaAdmin;
+    const produtosPagina = produtosFiltrados.slice(inicio, fim);
+    
     divLista.innerHTML = "";
-    produtos.forEach(prod => {
+    produtosPagina.forEach(prod => {
         const preco = parseFloat(prod.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         const item = document.createElement("div");
         item.className = "product-item";
@@ -83,8 +118,51 @@ function exibirProdutos(produtos) {
         `;
         divLista.appendChild(item);
     });
+    
     document.querySelectorAll(".edit-btn").forEach(btn => btn.addEventListener("click", () => abrirModalEditar(btn.dataset.id)));
     document.querySelectorAll(".delete-btn").forEach(btn => btn.addEventListener("click", () => excluirProduto(btn.dataset.id)));
+    
+    criarPaginacaoAdmin(totalPaginas);
+}
+
+function criarPaginacaoAdmin(totalPaginas) {
+    const paginacaoDiv = document.getElementById("adminPaginacao");
+    paginacaoDiv.innerHTML = "";
+    if (totalPaginas <= 1) return;
+    
+    // Botão anterior
+    if (paginaAdminAtual > 1) {
+        const btnAnterior = document.createElement("button");
+        btnAnterior.textContent = "Anterior";
+        btnAnterior.onclick = () => {
+            paginaAdminAtual--;
+            exibirProdutosPaginados();
+        };
+        paginacaoDiv.appendChild(btnAnterior);
+    }
+    
+    // Botões de página
+    for (let i = 1; i <= totalPaginas; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        if (i === paginaAdminAtual) btn.classList.add("ativo");
+        btn.onclick = () => {
+            paginaAdminAtual = i;
+            exibirProdutosPaginados();
+        };
+        paginacaoDiv.appendChild(btn);
+    }
+    
+    // Botão próximo
+    if (paginaAdminAtual < totalPaginas) {
+        const btnProximo = document.createElement("button");
+        btnProximo.textContent = "Próximo";
+        btnProximo.onclick = () => {
+            paginaAdminAtual++;
+            exibirProdutosPaginados();
+        };
+        paginacaoDiv.appendChild(btnProximo);
+    }
 }
 
 // ==================== EDIÇÃO ====================

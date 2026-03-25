@@ -26,6 +26,63 @@
         .delete-btn { background-color: #dc3545; }
         .delete-btn:hover { background-color: #c82333; }
         .modal-editar .modal-box { max-width: 600px; }
+        
+        /* Barra de busca */
+        .search-admin {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-admin input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .search-admin button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .search-admin button:hover {
+            background: #0056b3;
+        }
+        
+        /* Paginação */
+        .admin-paginacao {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .admin-paginacao button {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .admin-paginacao button:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .admin-paginacao button.ativo {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .admin-paginacao button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -47,10 +104,18 @@
         <div id="message"></div>
     </div>
 
-    <!-- Lista de produtos -->
+    <!-- Lista de produtos com busca e paginação -->
     <div class="container product-list">
         <h2>Produtos Existentes</h2>
+        
+        <!-- Barra de busca -->
+        <div class="search-admin">
+            <input type="text" id="buscaAdmin" placeholder="Buscar por nome do produto..." onkeyup="filtrarProdutosAdmin()">
+            <button onclick="limparBuscaAdmin()">Limpar</button>
+        </div>
+        
         <div id="lista-produtos"></div>
+        <div id="adminPaginacao" class="admin-paginacao"></div>
     </div>
 
     <!-- Modal de edição -->
