@@ -223,6 +223,71 @@ function atualizarContadorSelecionados() {
     if (span) span.textContent = produtosSelecionados.size;
 }
 
+function vetorProduto(p){
+
+    const preco = parseFloat(p.price) || 0;
+    const ram = parseInt(p.ram) || 0;
+    const storage = parseInt(p.storage) || 0;
+
+    return [
+        preco / 10000,   // normaliza preço
+        ram / 32,        // normaliza RAM
+        storage / 2000   // normaliza armazenamento
+    ];
+}
+
+function distancia(v1, v2){
+
+    let soma = 0;
+
+    for(let i = 0; i < v1.length; i++){
+        soma += Math.pow(v1[i] - v2[i], 2);
+    }
+
+    return Math.sqrt(soma);
+}
+
+function recomendarProdutos(produtoBase){
+
+    const vetorBase = vetorProduto(produtoBase);
+
+    return produtosGlobal
+        //  FILTRO IMPORTANTE
+        .filter(p => 
+            p.id !== produtoBase.id &&
+            p.category === produtoBase.category
+        )
+        .map(p => {
+
+            const vetor = vetorProduto(p);
+            const dist = distancia(vetorBase, vetor);
+
+            let bonus = 0;
+
+            if(p.brand === produtoBase.brand)
+                bonus -= 0.2;
+
+            if(p.tags && produtoBase.tags){
+
+                const t1 = p.tags.split(",");
+                const t2 = produtoBase.tags.split(",");
+
+                const iguais = t1.filter(tag => t2.includes(tag));
+
+                bonus -= iguais.length * 0.05;
+            }
+
+            return {
+                produto: p,
+                score: dist + bonus
+            };
+
+        })
+        .sort((a,b) => a.score - b.score)
+        .slice(0,4)
+        .map(r => r.produto);
+}
+
 function compararProdutos() {
     if (produtosSelecionados.size === 0) {
         alert("Selecione pelo menos um produto para comparar.");
@@ -295,6 +360,32 @@ function compararProdutos() {
     modal.classList.add("ativo");
 }
 
+function mostrarRecomendacoes(lista){
+
+    const div = document.createElement("div");
+    div.className = "recomendacoes";
+
+    div.innerHTML = "<h3>Produtos semelhantes</h3>";
+
+    lista.forEach(p => {
+
+        const card = document.createElement("div");
+        card.className = "mini-card";
+
+        card.innerHTML = `
+            <img src="${p.image}">
+            <p>${p.name}</p>
+        `;
+
+        card.onclick = () => abrirDetalhes(p);
+
+        div.appendChild(card);
+
+    });
+
+    document.getElementById("modal-detalhes").appendChild(div);
+}
+
 function normalizar(texto) {
     if (!texto) return "";
     return texto
@@ -303,12 +394,26 @@ function normalizar(texto) {
         .toLowerCase();
 }
 
+// Função auxiliar para formatar a descrição
+function formatarDescricao(texto) {
+    if (!texto) return "Sem descrição";
+    // Escapa caracteres especiais para evitar injeção de HTML
+    let textoEscapado = texto.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+    // Substitui quebras de linha por <br>
+    return textoEscapado.replace(/\n/g, '<br>');
+}
+
 function abrirDetalhes(produto) {
     const modal = document.getElementById("modal");
     const detalhes = document.getElementById("modal-detalhes");
     const preco = parseFloat(produto.price || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     
-    // Verifica se a categoria contém "fone de ouvido" (case insensitive)
+    // Verifica se a categoria contém "fone de ouvido"
     const categoria = (produto.category || "").toLowerCase();
     const isFone = categoria.includes("fone") || categoria.includes("fone de ouvido");
     
@@ -329,10 +434,19 @@ function abrirDetalhes(produto) {
         `;
     }
     
-    // Descrição sempre aparece
-    html += `<p><strong>Descrição:</strong> ${produto.description || "Sem descrição"}</p>`;
+    // Descrição com formatação
+    const descricaoFormatada = formatarDescricao(produto.description);
+    html += `
+        <p><strong>Descrição:</strong></p>
+        <div class="descricao-texto">${descricaoFormatada}</div>
+    `;
     
     detalhes.innerHTML = html;
+    
+    // Gerar recomendações
+    const recomendados = recomendarProdutos(produto);
+    mostrarRecomendacoes(recomendados);
+    
     modal.classList.add("ativo");
 }
 
