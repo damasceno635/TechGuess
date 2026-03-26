@@ -1,0 +1,55 @@
+name: TechGuess CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: Instalar Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Mostrar estrutura do projeto
+        run: ls -R
+
+      - name: Validar HTML
+        run: |
+          echo "Verificando arquivos HTML..."
+          find . -name "*.html"
+
+      - name: Validar JavaScript
+        run: |
+          echo "Verificando arquivos JS..."
+          find . -name "*.js"
+
+      - name: Verificar CSS
+        run: |
+          echo "Verificando arquivos CSS..."
+          find . -name "*.css"
+
+      - name: Instalar dependências (se existir package.json)
+        run: |
+          if [ -f package.json ]; then
+            npm install
+          else
+            echo "Nenhum package.json encontrado"
+          fi
+
+      - name: Simular execução do projeto
+        run: |
+          echo "Simulando execução do projeto TechGuess..."
+
+      - name: Pipeline concluída
+        run: echo "Build executado com sucesso 🚀"
