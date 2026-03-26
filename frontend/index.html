@@ -5,63 +5,58 @@
 <title>Tech Guess</title>
 <link rel="stylesheet" href="style.css">
 <link rel="icon" type="image/x-icon" href="techGuess.ico">
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<h1>Tech Guess</h1>
-<h2>Bem-vindo à Tech Guess! Encontre a tecnologia perfeita para você.</h2>
-<h4>Pesquise por aparelhos com base nas suas necessidades e receba sugestões ideais.</h4>
+<div class="container">
+    <img src="techGuess.ico" alt="Tech Guess" class="logo">
+    <h1>Tech Guess</h1>
+    <h2>Bem-vindo à Tech Guess! Encontre a tecnologia perfeita para você.</h2>
+    <h4>Pesquise por aparelhos com base nas suas necessidades e receba sugestões ideais.</h4>
 
-<div class="search-container">
-    <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="aplicarFiltros()">
-</div>
+    <div class="search-container">
+        <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="aplicarFiltros()">
+    </div>
 
-<div class="filtros-container">
-    <div class="filtro-group">
-        <label>Categoria:</label>
-        <select id="filtro-categoria" onchange="aplicarFiltros()">
-            <option value="">Todas</option>
-        </select>
+    <div class="filtros-container">
+        <div class="filtro-group">
+            <label>Categoria:</label>
+            <select id="filtro-categoria" onchange="aplicarFiltros()">
+                <option value="">Todas</option>
+            </select>
+        </div>
+        <div class="filtro-group">
+            <label>Marca:</label>
+            <select id="filtro-marca" onchange="aplicarFiltros()">
+                <option value="">Todas</option>
+            </select>
+        </div>
+        <div class="filtro-group">
+            <label>Preço até:</label>
+            <input type="range" id="filtro-preco" min="0" step="1" oninput="atualizarValorPreco()" onchange="aplicarFiltros()">
+            <span id="valor-preco">R$ 0,00</span>
+        </div>
+        <div class="filtro-group">
+            <label>Ordenar:</label>
+            <select id="ordenacao" onchange="aplicarFiltros()">
+                <option value="nome_asc">Nome (A-Z)</option>
+                <option value="nome_desc">Nome (Z-A)</option>
+                <option value="preco_asc">Menor preço</option>
+                <option value="preco_desc">Maior preço</option>
+            </select>
+        </div>
+        <div class="filtro-group">
+            <button id="openCompareBtn" class="btn-compare">Comparar produtos</button>
+        </div>
     </div>
-    <div class="filtro-group">
-        <label>Marca:</label>
-        <select id="filtro-marca" onchange="aplicarFiltros()">
-            <option value="">Todas</option>
-        </select>
-    </div>
-    <div class="filtro-group">
-        <label>Preço até:</label>
-        <input type="range" id="filtro-preco" min="0" step="1" oninput="atualizarValorPreco()" onchange="aplicarFiltros()">
-        <span id="valor-preco">R$ 0,00</span>
-    </div>
-    <div class="filtro-group">
-        <label>Ordenar:</label>
-        <select id="ordenacao" onchange="aplicarFiltros()">
-            <option value="nome_asc">Nome (A-Z)</option>
-            <option value="nome_desc">Nome (Z-A)</option>
-            <option value="preco_asc">Menor preço</option>
-            <option value="preco_desc">Maior preço</option>
-        </select>
-    </div>
-</div>
 
-<h2>Explore suas opções:</h2>
+    <h2>Explore suas opções:</h2>
 
-<div id="produtos"></div>
+    <div id="produtos"></div>
 
-<div id="paginacao" class="paginacao"></div>
-
-<!-- BARRA DE COMPARAÇÃO (canto superior direito) -->
-<div id="compareBar" class="compare-bar">
-    <div class="compare-header">
-        <span>📊 Comparar produtos</span>
-        <button id="closeCompareBar" class="close-compare">&times;</button>
-    </div>
-    <div class="compare-info">
-        <span id="selectedCount">0</span> produto(s) selecionado(s)
-    </div>
-    <textarea id="needInput" rows="2" placeholder="Descreva o que você precisa (ex: 'celular com boa câmera e bateria')"></textarea>
-    <button id="compareBtn">Comparar e Recomendar</button>
+    <div id="paginacao" class="paginacao"></div>
 </div>
 
 <!-- MODAL DE DETALHES -->
@@ -72,7 +67,22 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<!-- MODAL DE COMPARAÇÃO -->
+<div id="compareModal" class="modal">
+    <div class="modal-box compare-modal-box">
+        <span id="closeCompareModal" class="close-modal">&times;</span>
+        <div id="compareModalContent">
+            <h3>📊 Comparar produtos</h3>
+            <div class="compare-info">
+                <span id="selectedCountModal">0</span> produto(s) selecionado(s)
+            </div>
+            <div id="selectedList" class="selected-list"></div>
+            <textarea id="needInputModal" rows="3" placeholder="Descreva o que você precisa (ex: 'celular com boa câmera e bateria')"></textarea>
+            <button id="compareBtnModal" class="btn-compare-action">Comparar e Recomendar</button>
+        </div>
+    </div>
+</div>
 
+<script src="script.js"></script>
 </body>
 </html>
