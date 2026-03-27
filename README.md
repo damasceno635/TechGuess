@@ -33,12 +33,17 @@ O objetivo do projeto é demonstrar a construção de uma aplicação Full Stack
 - Ao visualizar um produto, sugestões de itens semelhantes aparecem (modal de detalhes)
 - Algoritmo que considera: Preço, RAM, Armazenamento, Marca, Tags
 
+### Testes Automatizados
+- Testes unitários de Lógica de Busca e Similaridade e de Interpretação e Pontuação
+- Testes End-to-End (E2E) para verificar algumas funcionalidade e, assim, avaliar a qualidade da experiência do usuário (UX)
+- Pipeline para automatizar a validação do código, garantindo qualidade e segurança a cada alteração.
+
 ## Tecnologias Utilizadas
 
 - **Frontend**: HTML5, CSS3, JavaScript (Vanilla), Fetch API
 - **Fontes**: Google Fonts (Inter)
 - **Backend**: Node.js, Express, MySQL, CORS
-- **DevOps**: Docker, Docker Compose, GitHub Actions (CI Pipeline)
+- **DevOps**: Docker, Docker Compose, Cypress, Jest e GitHub Actions (CI Pipeline)
 
 ## Executando o Projeto com Docker
 - **Clonar repositório**: git clone https://github.com/damasceno635/TechGuess.git
