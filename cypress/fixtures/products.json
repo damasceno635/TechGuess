@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "name": "iPhone 13",
+    "brand": "Apple",
+    "category": "Smartphone",
+    "price": 4999.99,
+    "ram": "6GB",
+    "storage": "128GB",
+    "description": "Smartphone Apple com câmera dupla e bateria de longa duração",
+    "tags": "celular,apple,ios,camera",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 2,
+    "name": "Galaxy S21",
+    "brand": "Samsung",
+    "category": "Smartphone",
+    "price": 3999.99,
+    "ram": "8GB",
+    "storage": "256GB",
+    "description": "Smartphone Android com tela de 120Hz e câmera profissional",
+    "tags": "celular,samsung,android,camera",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 3,
+    "name": "MacBook Air",
+    "brand": "Apple",
+    "category": "Notebook",
+    "price": 8999.99,
+    "ram": "8GB",
+    "storage": "256GB",
+    "description": "Notebook Apple com chip M1 e bateria de até 18 horas",
+    "tags": "notebook,apple,produtividade",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 4,
+    "name": "Xiaomi Mi 11",
+    "brand": "Xiaomi",
+    "category": "Smartphone",
+    "price": 2999.99,
+    "ram": "8GB",
+    "storage": "128GB",
+    "description": "Smartphone com câmera de 108MP",
+    "tags": "celular,xiaomi,camera",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 5,
+    "name": "Dell XPS 13",
+    "brand": "Dell",
+    "category": "Notebook",
+    "price": 6999.99,
+    "ram": "16GB",
+    "storage": "512GB",
+    "description": "Notebook ultrabook com tela InfinityEdge",
+    "tags": "notebook,dell,produtividade",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 6,
+    "name": "iPad Pro",
+    "brand": "Apple",
+    "category": "Tablet",
+    "price": 7999.99,
+    "ram": "8GB",
+    "storage": "256GB",
+    "description": "Tablet Apple com chip M1",
+    "tags": "tablet,apple,produtividade",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 7,
+    "name": "Galaxy Tab S7",
+    "brand": "Samsung",
+    "category": "Tablet",
+    "price": 4999.99,
+    "ram": "6GB",
+    "storage": "128GB",
+    "description": "Tablet Samsung com S Pen",
+    "tags": "tablet,samsung,produtividade",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 8,
+    "name": "Sony WH-1000XM4",
+    "brand": "Sony",
+    "category": "Fone de Ouvido",
+    "price": 1999.99,
+    "ram": "",
+    "storage": "",
+    "description": "Fone Bluetooth com cancelamento de ruído",
+    "tags": "fone,sony,audio",
+    "image": "https://via.placeholder.com/200"
+  },
+  {
+    "id": 9,
+    "name": "AirPods Pro",
+    "brand": "Apple",
+    "category": "Fone de Ouvido",
+    "price": 2499.99,
+    "ram": "",
+    "storage": "",
+    "description": "Fone Apple com cancelamento de ruído",
+    "tags": "fone,apple,audio",
+    "image": "https://via.placeholder.com/200"
+  }
+]

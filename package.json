@@ -8,10 +8,13 @@
   "description": "",
   "main": "index.js",
   "devDependencies": {
+    "cypress": "^15.13.0",
     "jest": "^30.3.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:cypress": "cypress run",
+    "test:cypress:open": "cypress open"
   },
   "repository": {
     "type": "git",

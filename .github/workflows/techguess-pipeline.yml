@@ -47,9 +47,32 @@ jobs:
             echo "Nenhum package.json encontrado"
           fi
 
+      # PASSO MODIFICADO: Instalar Cypress
+      - name: Instalar Cypress
+        run: |
+          npm install cypress --save-dev
+
       - name: Simular execução do projeto
         run: |
           echo "Simulando execução do projeto TechGuess..."
+
+      # NOVO PASSO: Executar testes Cypress
+      - name: Executar testes Cypress
+        run: |
+          # Instalar servidor http
+          npm install -g http-server
+          
+          # Iniciar servidor em background para servir o frontend
+          http-server ./frontend -p 5500 --silent &
+          
+          # Aguardar servidor iniciar
+          sleep 5
+          
+          # Executar os testes Cypress
+          npx cypress run
+          
+          # Finalizar servidor
+          kill $(lsof -t -i:5500) || true
 
       - name: Pipeline concluída
         run: echo "Build executado com sucesso 🚀"
