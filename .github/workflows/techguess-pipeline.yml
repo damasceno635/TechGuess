@@ -31,7 +31,7 @@ jobs:
 
       - name: Iniciar servidor
         run: |
-          http-server ./frontend -p 5500 --silent &
+          http-server . -p 5500 --silent &
           sleep 5
 
       # 🔹 Testes E2E (Cypress)
