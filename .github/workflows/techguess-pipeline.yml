@@ -53,3 +53,6 @@ jobs:
 
       - name: Pipeline concluída
         run: echo "Build executado com sucesso 🚀"
+
+      - name: Run tests
+        run: npm test

@@ -84,58 +84,140 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+
+        /* Tela de login */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .login-error {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+        .admin-content {
+            display: none;
+        }
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 100;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+        }
     </style>
 </head>
 <body>
-    <h1>Admin - Gerenciar Produtos</h1>
-
-    <!-- Formulário de criação -->
-    <div class="container">
-        <h2>Criar Novo Produto</h2>
-        <input id="name" placeholder="Nome do produto *" required>
-        <input id="image" placeholder="URL da imagem">
-        <input id="category" placeholder="Categoria">
-        <input id="brand" placeholder="Marca *" required>
-        <input id="price" placeholder="Preço *" type="number" step="0.01" required>
-        <input id="ram" placeholder="RAM">
-        <input id="storage" placeholder="Armazenamento">
-        <textarea id="description" placeholder="Descrição"></textarea>
-        <input id="tags" placeholder="Tags (ex: gaming,camera)">
-        <button onclick="criarProduto()" id="submitBtn">Criar Produto</button>
-        <div id="message"></div>
-    </div>
-
-    <!-- Lista de produtos com busca e paginação -->
-    <div class="container product-list">
-        <h2>Produtos Existentes</h2>
-        
-        <!-- Barra de busca -->
-        <div class="search-admin">
-            <input type="text" id="buscaAdmin" placeholder="Buscar por nome do produto..." onkeyup="filtrarProdutosAdmin()">
-            <button onclick="limparBuscaAdmin()">Limpar</button>
+    <!-- Tela de Login -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <h2>Acesso Admin</h2>
+            <input type="password" id="senhaAdmin" placeholder="Digite a senha" onkeypress="if(event.key === 'Enter') verificarSenha()">
+            <button onclick="verificarSenha()">Entrar</button>
+            <div id="loginError" class="login-error">Senha incorreta!</div>
         </div>
-        
-        <div id="lista-produtos"></div>
-        <div id="adminPaginacao" class="admin-paginacao"></div>
     </div>
 
-    <!-- Modal de edição -->
-    <div id="modalEditar" class="modal modal-editar">
-        <div class="modal-box">
-            <span id="fecharEditar" class="close">&times;</span>
-            <h2>Editar Produto</h2>
-            <input type="hidden" id="edit-id">
-            <input id="edit-name" placeholder="Nome *" required>
-            <input id="edit-image" placeholder="URL da imagem">
-            <input id="edit-category" placeholder="Categoria">
-            <input id="edit-brand" placeholder="Marca *" required>
-            <input id="edit-price" placeholder="Preço *" type="number" step="0.01" required>
-            <input id="edit-ram" placeholder="RAM">
-            <input id="edit-storage" placeholder="Armazenamento">
-            <textarea id="edit-description" placeholder="Descrição"></textarea>
-            <input id="edit-tags" placeholder="Tags">
-            <button onclick="salvarEdicao()" id="salvarBtn">Salvar Alterações</button>
-            <div id="edit-message"></div>
+    <!-- Conteúdo Admin (inicialmente oculto) -->
+    <div id="adminContent" class="admin-content">
+        <button class="logout-btn" onclick="logout()">🚪 Sair</button>
+        
+        <h1>Admin - Gerenciar Produtos</h1>
+
+        <!-- Formulário de criação -->
+        <div class="container">
+            <h2>Criar Novo Produto</h2>
+            <input id="name" placeholder="Nome do produto *" required>
+            <input id="image" placeholder="URL da imagem">
+            <input id="category" placeholder="Categoria">
+            <input id="brand" placeholder="Marca *" required>
+            <input id="price" placeholder="Preço *" type="number" step="0.01" required>
+            <input id="ram" placeholder="RAM">
+            <input id="storage" placeholder="Armazenamento">
+            <textarea id="description" placeholder="Descrição"></textarea>
+            <input id="tags" placeholder="Tags (ex: gaming,camera)">
+            <button onclick="criarProduto()" id="submitBtn">Criar Produto</button>
+            <div id="message"></div>
+        </div>
+
+        <!-- Lista de produtos com busca e paginação -->
+        <div class="container product-list">
+            <h2>Produtos Existentes</h2>
+            
+            <!-- Barra de busca -->
+            <div class="search-admin">
+                <input type="text" id="buscaAdmin" placeholder="Buscar por nome do produto..." onkeyup="filtrarProdutosAdmin()">
+                <button onclick="limparBuscaAdmin()">Limpar</button>
+            </div>
+            
+            <div id="lista-produtos"></div>
+            <div id="adminPaginacao" class="admin-paginacao"></div>
+        </div>
+
+        <!-- Modal de edição -->
+        <div id="modalEditar" class="modal modal-editar">
+            <div class="modal-box">
+                <span id="fecharEditar" class="close">&times;</span>
+                <h2>Editar Produto</h2>
+                <input type="hidden" id="edit-id">
+                <input id="edit-name" placeholder="Nome *" required>
+                <input id="edit-image" placeholder="URL da imagem">
+                <input id="edit-category" placeholder="Categoria">
+                <input id="edit-brand" placeholder="Marca *" required>
+                <input id="edit-price" placeholder="Preço *" type="number" step="0.01" required>
+                <input id="edit-ram" placeholder="RAM">
+                <input id="edit-storage" placeholder="Armazenamento">
+                <textarea id="edit-description" placeholder="Descrição"></textarea>
+                <input id="edit-tags" placeholder="Tags">
+                <button onclick="salvarEdicao()" id="salvarBtn">Salvar Alterações</button>
+                <div id="edit-message"></div>
+            </div>
         </div>
     </div>
 

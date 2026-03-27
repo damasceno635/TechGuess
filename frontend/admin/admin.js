@@ -4,6 +4,50 @@ let produtosFiltrados = [];      // Produtos após busca
 let paginaAdminAtual = 1;
 const itensPorPaginaAdmin = 5;
 
+// ==================== AUTENTICAÇÃO ====================
+const SENHA_ADMIN = "admin123"; // Você pode alterar esta senha
+
+function verificarSenha() {
+    const senhaInput = document.getElementById("senhaAdmin");
+    const senha = senhaInput.value;
+    const loginError = document.getElementById("loginError");
+    
+    if (senha === SENHA_ADMIN) {
+        // Login bem-sucedido
+        localStorage.setItem("adminAutenticado", "true");
+        document.getElementById("loginOverlay").style.display = "none";
+        document.getElementById("adminContent").style.display = "block";
+        
+        // Carregar dados após login
+        carregarProdutos();
+    } else {
+        // Senha incorreta
+        loginError.style.display = "block";
+        senhaInput.value = "";
+        senhaInput.focus();
+    }
+}
+
+function logout() {
+    localStorage.removeItem("adminAutenticado");
+    document.getElementById("adminContent").style.display = "none";
+    document.getElementById("loginOverlay").style.display = "flex";
+    document.getElementById("senhaAdmin").value = "";
+    document.getElementById("loginError").style.display = "none";
+}
+
+function verificarAutenticacao() {
+    const autenticado = localStorage.getItem("adminAutenticado");
+    if (autenticado === "true") {
+        document.getElementById("loginOverlay").style.display = "none";
+        document.getElementById("adminContent").style.display = "block";
+        carregarProdutos();
+    } else {
+        document.getElementById("loginOverlay").style.display = "flex";
+        document.getElementById("adminContent").style.display = "none";
+    }
+}
+
 // ==================== CRIAÇÃO ====================
 async function criarProduto() {
     const btn = document.getElementById("submitBtn");
@@ -264,5 +308,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechar = document.getElementById("fecharEditar");
     if (fechar) fechar.onclick = () => modal.classList.remove("ativo");
     window.onclick = e => { if (e.target === modal) modal.classList.remove("ativo"); };
-    carregarProdutos();
+    
+    // Verificar autenticação ao carregar a página
+    verificarAutenticacao();
+    
+    // Permitir login com Enter
+    const senhaInput = document.getElementById("senhaAdmin");
+    if (senhaInput) {
+        senhaInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") verificarSenha();
+        });
+    }
 });
