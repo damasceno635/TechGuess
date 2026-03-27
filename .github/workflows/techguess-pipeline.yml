@@ -6,76 +6,40 @@ on:
   pull_request:
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Clonar repositório
         uses: actions/checkout@v3
 
       - name: Instalar Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.18.0
 
-      - name: Mostrar estrutura do projeto
-        run: ls -R
+      - name: Instalar dependências
+        run: npm install
 
-      - name: Validar HTML
+      # 🔹 Testes unitários (Jest)
+      - name: Rodar testes unitários (Jest)
+        run: npm test
+
+      # 🔹 Subir servidor para Cypress
+      - name: Instalar servidor HTTP
+        run: npm install -g http-server
+
+      - name: Iniciar servidor
         run: |
-          echo "Verificando arquivos HTML..."
-          find . -name "*.html"
-
-      - name: Validar JavaScript
-        run: |
-          echo "Verificando arquivos JS..."
-          find . -name "*.js"
-
-      - name: Verificar CSS
-        run: |
-          echo "Verificando arquivos CSS..."
-          find . -name "*.css"
-
-      - name: Instalar dependências (se existir package.json)
-        run: |
-          if [ -f package.json ]; then
-            npm install
-          else
-            echo "Nenhum package.json encontrado"
-          fi
-
-      # PASSO MODIFICADO: Instalar Cypress
-      - name: Instalar Cypress
-        run: |
-          npm install cypress --save-dev
-
-      - name: Simular execução do projeto
-        run: |
-          echo "Simulando execução do projeto TechGuess..."
-
-      # NOVO PASSO: Executar testes Cypress
-      - name: Executar testes Cypress
-        run: |
-          # Instalar servidor http
-          npm install -g http-server
-          
-          # Iniciar servidor em background para servir o frontend
           http-server ./frontend -p 5500 --silent &
-          
-          # Aguardar servidor iniciar
           sleep 5
-          
-          # Executar os testes Cypress
-          npx cypress run
-          
-          # Finalizar servidor
-          kill $(lsof -t -i:5500) || true
+
+      # 🔹 Testes E2E (Cypress)
+      - name: Rodar testes E2E (Cypress)
+        run: npm run test:cypress
+
+      - name: Finalizar servidor
+        run: kill $(lsof -t -i:5500) || true
 
       - name: Pipeline concluída
         run: echo "Build executado com sucesso 🚀"
-
-      - name: Run tests
-        run: npm test
