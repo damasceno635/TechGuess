@@ -4,8 +4,8 @@ let produtosFiltrados = [];      // Produtos após busca
 let paginaAdminAtual = 1;
 const itensPorPaginaAdmin = 5;
 
-// ==================== AUTENTICAÇÃO ====================
-const SENHA_ADMIN = "admin123"; // Você pode alterar esta senha
+// AUTENTICAÇÃO
+const SENHA_ADMIN = "admin123";
 
 function verificarSenha() {
     const senhaInput = document.getElementById("senhaAdmin");
@@ -48,7 +48,7 @@ function verificarAutenticacao() {
     }
 }
 
-// ==================== CRIAÇÃO ====================
+// CRIAÇÃO
 async function criarProduto() {
     const btn = document.getElementById("submitBtn");
     const msgDiv = document.getElementById("message");
@@ -93,7 +93,7 @@ async function criarProduto() {
     }
 }
 
-// ==================== LISTAGEM COM BUSCA E PAGINAÇÃO ====================
+//  LISTAGEM COM BUSCA E PAGINAÇÃO 
 async function carregarProdutos() {
     const divLista = document.getElementById("lista-produtos");
     divLista.innerHTML = "<p>Carregando...</p>";
@@ -209,7 +209,7 @@ function criarPaginacaoAdmin(totalPaginas) {
     }
 }
 
-// ==================== EDIÇÃO ====================
+// EDIÇÃO 
 async function abrirModalEditar(id) {
     try {
         const res = await fetch(`${API}/${id}`);
@@ -281,7 +281,7 @@ function showEditMessage(text, type) {
     setTimeout(() => msg.style.display = "none", 3000);
 }
 
-// ==================== EXCLUSÃO ====================
+// EXCLUSÃO 
 async function excluirProduto(id) {
     if (!confirm("Tem certeza que deseja excluir este produto?")) return;
     try {
@@ -294,7 +294,7 @@ async function excluirProduto(id) {
     }
 }
 
-// ==================== INICIALIZAÇÃO ====================
+// INICIALIZAÇÃO 
 function showMessage(text, type) {
     const msgDiv = document.getElementById("message");
     msgDiv.textContent = text;

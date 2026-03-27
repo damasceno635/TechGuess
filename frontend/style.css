@@ -468,7 +468,7 @@ h4 {
     }
 }
 
-/* ===== RECOMENDAÇÕES (tamanho reduzido) ===== */
+/* RECOMENDAÇÕES */
 
 .recomendacoes-container {
     margin-top: 24px;
@@ -493,7 +493,7 @@ h4 {
     scroll-behavior: smooth;
 }
 
-/* scrollbar discreta */
+/* scrollbar */
 .recomendacoes::-webkit-scrollbar {
     height: 6px;
 }
@@ -551,7 +551,7 @@ h4 {
     margin-top: 4px;
 }
 
-/* descrição melhorada */
+/* descrição */
 .descricao-texto {
     background: var(--gray-50);
     padding: 10px 14px;

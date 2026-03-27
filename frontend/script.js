@@ -19,7 +19,7 @@ const needInputModal = document.getElementById("needInputModal");
 const compareBtnModal = document.getElementById("compareBtnModal");
 const selectedListDiv = document.getElementById("selectedList");
 
-// ===================== CARREGAR PRODUTOS =====================
+// CARREGAR PRODUTOS 
 async function carregar() {
     const divProdutos = document.getElementById("produtos");
     divProdutos.innerHTML = '<div class="loading">Carregando produtos...</div>';
@@ -241,7 +241,7 @@ function atualizarContadorSelecionados() {
     }
 }
 
-// ===================== FUNÇÕES DE RECOMENDAÇÃO (mantidas) =====================
+// FUNÇÕES DE RECOMENDAÇÃO 
 function vetorProduto(p){
     const preco = parseFloat(p.price) || 0;
     const ram = parseInt(p.ram) || 0;
@@ -283,7 +283,7 @@ function recomendarProdutos(produtoBase){
         .map(r => r.produto);
 }
 
-// ===================== MODAL DE DETALHES E RECOMENDAÇÕES =====================
+// MODAL DE DETALHES E RECOMENDAÇÕES 
 function formatarDescricao(texto) {
     if (!texto) return "Sem descrição";
     let textoEscapado = texto.replace(/[&<>]/g, function(m) {
@@ -360,7 +360,7 @@ function abrirDetalhes(produto) {
     mostrarRecomendacoes(recomendados);
 }
 
-// ===================== MODAL DE COMPARAÇÃO =====================
+// MODAL DE COMPARAÇÃO 
 function atualizarModalComparacao() {
     // Atualiza contador
     if (selectedCountSpan) {
@@ -466,7 +466,7 @@ function executarComparacao(necessidade) {
     compareModal.classList.remove("ativo"); // fecha o modal de comparação
 }
 
-// ===================== UTILITÁRIOS =====================
+// UTILITÁRIOS 
 function normalizar(texto) {
     if (!texto) return "";
     return texto
@@ -475,7 +475,7 @@ function normalizar(texto) {
         .toLowerCase();
 }
 
-// ===================== EVENTOS E INICIALIZAÇÃO =====================
+// EVENTOS E INICIALIZAÇÃO 
 document.addEventListener("DOMContentLoaded", () => {
     // Fechar modais (detalhes e comparação)
     if (closeDetalhes) closeDetalhes.onclick = () => modalDetalhes.classList.remove("ativo");
